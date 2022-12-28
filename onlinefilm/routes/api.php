@@ -23,9 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/users', [UserController::class, 'index']); //za prikaz svih korisnika
-Route::resource('genres', GenreController::class); //za prikaz zanrova
-Route::redirect('/korisnici', '/users');
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -41,7 +39,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/addmovie', [MovieController::class, 'add']);
     Route::get('/movieyear/{year}', [MovieController::class, 'thisyear']);
     Route::get('/genremovies/{id}', [MovieController::class, 'genremovies']);
+    Route::get('/users', [UserController::class, 'index']); //za prikaz svih korisnika
+
+    Route::redirect('/korisnici', '/users');
 
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+Route::get('/allmovies', [MovieController::class, 'index']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MovieCollection;
 use App\Http\Resources\MovieResource;
 use App\Models\Actor;
 use App\Models\Genre;
@@ -21,6 +22,8 @@ class MovieController extends Controller
     public function index()
     {
         //
+        $movie = Movie::all();
+        return new MovieCollection($movie);
     }
 
     /**
