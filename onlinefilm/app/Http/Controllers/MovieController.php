@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MovieResource;
 use App\Models\Actor;
+use App\Models\Genre;
 use App\Models\Movie;
 
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class MovieController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function add(Request $request)
     {
         $validator = Validator::make($request->all(), [
 
@@ -62,7 +63,7 @@ class MovieController extends Controller
         ]);
 
 
-        return response()->json(['Dodali ste film.', new MovieResource($movie)]);
+        return response()->json('Dodali ste film.');
     }
 
     /**
@@ -94,18 +95,18 @@ class MovieController extends Controller
      * @param  \App\Models\Movie  $movie
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Movie $movie)
+    public function updateById(Request $request, int $id)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|min:50',
-            'year' => 'required',
-            'genre_id' => 'required'
-        ]);
+        /* $validator = Validator::make($request->all(), [
+        'title' => 'required|string|max:255',
+        'description' => 'required|string|min:50',
+        'year' => 'required',
+        'genre_id' => 'required'
+        ]);*/
 
-        if ($validator->fails())
-            return response()->json($validator->errors());
-
+        //   if ($validator->fails())
+        //return response()->json($validator->errors());
+        $movie = Movie::find($id);
         $movie->title = $request->title;
         $movie->description = $request->description;
         $movie->year = $request->year;
@@ -114,7 +115,7 @@ class MovieController extends Controller
 
         $movie->save();
 
-        return response()->json(['Movie is updated successfully.', new ProductResource($movie)]);
+        return response()->json(['Film je azuriran!', new MovieResource($movie)]);
     }
 
     /**
@@ -125,9 +126,27 @@ class MovieController extends Controller
      */
     public function destroy(int $id)
     {
-        $movie = Movie::find($id);
+        $movie = Movie::findOrFail($id);
         $movie->delete();
 
         return response()->json(['Obrisali ste film']);
     }
+
+    public function thisyear(int $year)
+    {
+        $movie = Movie::get()->where('year', $year);
+
+        return response()->json($movie->pluck('title'));
+    }
+
+    public function genremovies(int $id)
+    {
+
+        $movies = Movie::get()->where('genre_id', $id);
+        if (is_null($movies)) {
+            return response()->json("Ne postoji film ovog zanra");
+        }
+        return response()->json($movies->pluck('title'));
+    }
+
 }

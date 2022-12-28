@@ -2,6 +2,7 @@
 
 use App\Http\Resources\GenreResource;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\API\AuthController;
 use Illuminate\Http\Request;
@@ -25,7 +26,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/users', [UserController::class, 'index']); //za prikaz svih korisnika
 Route::resource('genres', GenreController::class); //za prikaz zanrova
 Route::redirect('/korisnici', '/users');
-Route::redirect('/zanrovi', '/genres');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -35,9 +35,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             return auth()->user();
         }
     );
-    Route::resource('movies', MovieController::class)->only(['update', 'store', 'destroy']);
+    Route::resource('movies', MovieController::class)->only(['update', 'add', 'destroy']);
     Route::delete('/deletemovie/{id}', [MovieController::class, 'destroy']);
+    Route::put('/update/{id}', [MovieController::class, 'updateById']);
+    Route::post('/addmovie', [MovieController::class, 'add']);
+    Route::get('/movieyear/{year}', [MovieController::class, 'thisyear']);
+    Route::get('/genremovies/{id}', [MovieController::class, 'genremovies']);
 
-    // API route for logout user
+
     Route::post('/logout', [AuthController::class, 'logout']);
 });

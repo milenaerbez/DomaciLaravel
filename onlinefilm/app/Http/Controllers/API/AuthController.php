@@ -53,7 +53,7 @@ class AuthController extends Controller
     {
         auth()->user()->tokens()->delete();
         return [
-            'message' => 'Uspesno ste se izlogovali!!'
+            'message' => 'Uspesno ste se odjavili!!'
         ];
     }
 }
